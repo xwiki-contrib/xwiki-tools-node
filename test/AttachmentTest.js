@@ -5,6 +5,7 @@ var XWiki = require ("../index");
 var BufferedWriter = require('buffered-writer');
 var nThen = require('nthen');
 var Crypto = require('crypto');
+var XMHell = require('xmhell');
 
 exports.test_addAttachment = function (test, assert)
 {
@@ -23,14 +24,14 @@ exports.test_addAttachment = function (test, assert)
     }).nThen(function(waitFor) {
         doc.addAttachment("temp.txt");
         var stream = BufferedWriter.open("temp.xml");
-        XWiki.XML.write(doc.json, stream, waitFor(function() {
+        XMHell.write(doc.json, stream, waitFor(function() {
             stream.close(waitFor());
         }));
     }).nThen(function(waitFor) {
         Fs.readFile("temp.xml", waitFor(function (err, data) {
             if (err) { throw err; }
             var str = data.toString();
-            var json = XWiki.XML.read(str);
+            var json = XMHell.parse(str);
             var content = new Buffer(json.xwikidoc.attachment.content, 'base64');
             assert.equal(rand, String(content));
             test.finish();

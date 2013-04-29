@@ -2,7 +2,8 @@
 
 var tests = [
     "XMLTest",
-    "AttachmentTest"
+    "AttachmentTest",
+    "ObjectClassTest"
 ];
 
 var Whiskey = require('whiskey');
