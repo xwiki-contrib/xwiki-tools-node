@@ -2,7 +2,7 @@
     "author": "Caleb James DeLisle",
     "name": "xwiki-tools",
     "description": "Tools for building documents and packages suitable for import into XWiki.",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "repository": {
         "url": "https://github.com/cjdelisle/xwiki-tools.git",
         "type": "git"
@@ -11,6 +11,9 @@
     "__IGNORE__bin": {
         "xml2json": "./bin/xml2json"
     },
+    "licenses": [
+        {"type": "LGPLv2.1+", "url": "http://www.gnu.org/licenses/lgpl-2.1.txt"}
+    ],
     "dependencies": {
         "requirejs": "~2.1",
         "buffered-writer": "~0.2.3",
