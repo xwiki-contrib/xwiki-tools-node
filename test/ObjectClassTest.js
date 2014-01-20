@@ -10,13 +10,13 @@ var mkTest = function(xml) {
       if (err) { throw err; }
       var json = XMHell.parse(content);
 
-      var out;
       var js = XWiki.tools.ClassParser.parse(content);
-      var func = new Function("var define = arguments[0]; " + js);
-      func(function(x,y) { out = y; });
-      var XObject = out(XWiki);
+      var func = new Function("require", "module", js);
+      var mod = { exports: {} };
+      func(require, mod);
+      var XObject = mod.exports;
 
-      var obj = new XObject();
+      var obj = XObject.create();
       var cc = obj.json['class'];
       var c = json.xwikidoc['class'];
       //console.log(JSON.stringify(cc, null, '  '));

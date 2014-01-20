@@ -9,7 +9,7 @@ var XMHell = require('xmhell');
 
 exports.test_addAttachment = function (test, assert)
 {
-    var doc = new XWiki.model.XWikiDoc(['Main', 'WebHome']);
+    var doc = XWiki.model.XWikiDoc.create(['Main', 'WebHome']);
 
     var rand;
     nThen(function(waitFor) {
