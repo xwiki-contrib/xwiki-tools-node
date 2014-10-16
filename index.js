@@ -1,1 +1,1 @@
-module.exports = require('./lib/xwiki');
+module.exports = require('./lib/exports');

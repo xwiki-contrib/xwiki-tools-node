@@ -11,14 +11,12 @@ var mkTest = function(xml) {
       var json = XMHell.parse(content);
 
       var js = XWiki.tools.ClassParser.parse(content);
-      var func = new Function("require", "module", js);
-      var mod = { exports: {} };
-      func(require, mod);
-      var XObject = mod.exports;
+      var obj = XWiki.model.BaseObj.create("test.class");
+      Function("XClass", js)(function (fun) { fun(obj, XWiki) });
 
-      var obj = XObject.create();
       var cc = obj.json['class'];
       var c = json.xwikidoc['class'];
+      c.name = "test.class";
       //console.log(JSON.stringify(cc, null, '  '));
       //console.log(JSON.stringify(c, null, '  '));
       assert.deepEqual(cc, c);
