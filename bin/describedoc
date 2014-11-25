@@ -1,0 +1,52 @@
+#!/usr/bin/env node
+/* -*- Mode:js */
+var XWiki = require('../index');
+var XMHell = require('xmhell');
+var Fs = require('fs');
+var nThen = require('nthen');
+
+var writeDir = function (dir, structure, cb) {
+    var nt = nThen;
+    console.log('writeDir: ' + dir);
+    for (var name in structure) {
+        (function (name) {
+        //console.log('name: ' + name);
+        var exists = false;
+        var file = dir + '/' + name;
+
+        if (typeof(structure[name]) !== 'object' || Buffer.isBuffer(structure[name])) {
+            var wr;
+            if (Buffer.isBuffer(structure[name])) {
+                wr = structure[name];
+            } else {
+                wr = String(structure[name]);
+            }
+            nt = nt(function (waitFor) {
+                console.log('writeFile: ' + file);
+                Fs.writeFile(file, wr, waitFor(function (err) {
+                    if (err) { throw err; }
+                }));
+            }).nThen;
+        } else {
+            nt = nt(function (waitFor) {
+                if (exists) { return; }
+                //console.log('mkdir: ' + file);
+                Fs.mkdir(file, waitFor(function (err) {
+                    if (err && err.code !== 'EEXIST') { throw err; }
+                }));
+            }).nThen(function (waitFor) {
+                writeDir(file, structure[name], waitFor());
+            }).nThen;
+        }
+        }(name));
+    }
+    nt(cb);
+};
+
+Fs.readFile(process.argv[process.argv.length-1], function (err, data) {
+    if (err) { throw err; }
+    var json = XMHell.parse(data.toString('utf8'));
+    writeDir(process.cwd(), XWiki.tools.DocParser.parse(json), function () {
+        console.log('done');
+    });
+});
