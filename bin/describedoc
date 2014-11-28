@@ -10,34 +10,34 @@ var writeDir = function (dir, structure, cb) {
     console.log('writeDir: ' + dir);
     for (var name in structure) {
         (function (name) {
-        //console.log('name: ' + name);
-        var exists = false;
-        var file = dir + '/' + name;
+            //console.log('name: ' + name);
+            var exists = false;
+            var file = dir + '/' + name;
 
-        if (typeof(structure[name]) !== 'object' || Buffer.isBuffer(structure[name])) {
-            var wr;
-            if (Buffer.isBuffer(structure[name])) {
-                wr = structure[name];
+            if (typeof(structure[name]) !== 'object' || Buffer.isBuffer(structure[name])) {
+                var wr;
+                if (Buffer.isBuffer(structure[name])) {
+                    wr = structure[name];
+                } else {
+                    wr = String(structure[name]);
+                }
+                nt = nt(function (waitFor) {
+                    console.log('writeFile: ' + file);
+                    Fs.writeFile(file, wr, waitFor(function (err) {
+                        if (err) { throw err; }
+                    }));
+                }).nThen;
             } else {
-                wr = String(structure[name]);
+                nt = nt(function (waitFor) {
+                    if (exists) { return; }
+                    //console.log('mkdir: ' + file);
+                    Fs.mkdir(file, waitFor(function (err) {
+                        if (err && err.code !== 'EEXIST') { throw err; }
+                    }));
+                }).nThen(function (waitFor) {
+                    writeDir(file, structure[name], waitFor());
+                }).nThen;
             }
-            nt = nt(function (waitFor) {
-                console.log('writeFile: ' + file);
-                Fs.writeFile(file, wr, waitFor(function (err) {
-                    if (err) { throw err; }
-                }));
-            }).nThen;
-        } else {
-            nt = nt(function (waitFor) {
-                if (exists) { return; }
-                //console.log('mkdir: ' + file);
-                Fs.mkdir(file, waitFor(function (err) {
-                    if (err && err.code !== 'EEXIST') { throw err; }
-                }));
-            }).nThen(function (waitFor) {
-                writeDir(file, structure[name], waitFor());
-            }).nThen;
-        }
         }(name));
     }
     nt(cb);
