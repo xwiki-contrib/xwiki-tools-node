@@ -45,7 +45,9 @@ var writeDir = function (dir, structure, cb) {
 
 Fs.readFile(process.argv[process.argv.length-1], function (err, data) {
     if (err) { throw err; }
-    var json = XMHell.parse(data.toString('utf8'));
+    var dat = data.toString('utf8');
+    dat = dat.replace(/&#xd;/g, '');
+    var json = XMHell.parse(dat);
     writeDir(process.cwd(), XWiki.tools.DocParser.parse(json), function () {
         console.log('done');
     });

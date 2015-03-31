@@ -2,14 +2,14 @@
     "author": "Caleb James DeLisle",
     "name": "xwiki-tools",
     "description": "Tools for building documents and packages suitable for import into XWiki.",
-    "version": "0.6.3",
+    "version": "0.6.4",
     "repository": {
         "url": "https://github.com/xwiki-contrib/xwiki-tools.git",
         "type": "git"
     },
     "main": "./index",
     "__IGNORE__bin": {
-        "xml2json": "./bin/xml2json"
+        "xwiki_dumpdoc": "./bin/describedoc"
     },
     "licenses": [
         {"type": "AGPLv3.0+", "url": "http://www.gnu.org/licenses/agpl-3.0.txt"}
