@@ -1,0 +1,3 @@
+#!/usr/bin/env node
+/* -*- Mode:js */
+require('../index').Console.main(process.argv);

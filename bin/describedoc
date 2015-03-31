@@ -5,6 +5,17 @@ var XMHell = require('xmhell');
 var Fs = require('fs');
 var nThen = require('nthen');
 var Http = require('http');
+var Unzip = require('unzip2');
+
+var DEFAULT_PKG = [
+    'Package(function (pack, XWiki) {',
+    '    pack.setName("Nameless");',
+    '    pack.setDescription("none");',
+    '    pack.setExtensionId("org.xwiki:unnamed-extension");',
+    '    pack.setXarName("i-forgot-to-edit-src-slash-xwiki-slash-this-dot-js.xar");',
+    '});',
+    ''
+].join('\n');
 
 var writeDir = function (dir, structure, cb) {
     var nt = nThen;
@@ -47,25 +58,101 @@ var writeDir = function (dir, structure, cb) {
 var parseDump = function (dat) {
     dat = dat.replace(/&#xd;/g, '');
     var json = XMHell.parse(dat);
-    writeDir(process.cwd(), XWiki.tools.DocParser.parse(json), function () {
+    nThen(function (waitFor) {
+        Fs.mkdir(process.cwd() + '/src', waitFor(function (err) {
+            if (err && err.code !== 'EEXIST') { throw err; }
+            process.chdir(process.cwd() + '/src');
+        }))
+    }).nThen(function (waitFor) {
+        writeDir(process.cwd(), XWiki.tools.DocParser.parse(json), waitFor());
+    }).nThen(function (waitFor) {
+        Fs.exists('xwiki/this.js', waitFor(function (ex) {
+            if (ex) { return; }
+            Fs.writeFile('xwiki/this.js', DEFAULT_PKG, waitFor(function (err) {
+                if (err) { throw err; }
+            }));
+        }));
+    }).nThen(function (waitFor) {
         console.log('done');
+    });
+
+};
+
+var parseZip = function (stream) {
+    stream.pipe(Unzip.Parse()).on('entry', function (entry) {
+        if (entry.type === 'File' &&
+            entry.path.indexOf('package.xml') === -1)
+        {
+            var dat = [];
+            entry.on('data', function (d) { dat.push(d.toString('utf8')); });
+            entry.on('end', function () {
+                parseDump(dat.join(''));
+                entry.autodrain();
+            });
+        } else {
+            entry.autodrain();
+        }
     });
 };
 
+// Admin:admin@blk1:8080/riscoss/wiki/wiki1/export/Main/WebHome
+var xardump = function (arg) {
+    var userPass;
+    var host;
+    var port = 80;
+    var path;
+    var docName;
+    arg = arg.replace(/^([^@]+)@([^:\/]+)/, function (all, up, h) {
+        userPass = up;
+        host = h;
+        return '';
+    });
+    if (!userPass) {
+        throw new Error("invalid format, expecting something like\n" +
+            "Admin:admin@blk1:8080/riscoss/wiki/wiki1/export/Main/WebHome");
+    }
+    if (arg[0] === ':') {
+        arg = arg.replace(/^:([^\/]+)/, function (all, p) {
+            port = p;
+            return '';
+        });
+    }
+    arg.replace(/\/([^\/]+)\/([^\/]+)$/, function (all, space, name) {
+        docName = space + '.' + name;
+    });
+    path = arg + '?name=x&pages=' + docName;
+    console.log('query: ' + userPass + "@" + host + ":" + port + "/" + path);
+
+    var req = Http.request({
+        hostname: host,
+        port: port,
+        path: path,
+        auth: userPass,
+        method: 'POST'
+    }, function(res) {
+        console.log('STATUS: ' + res.statusCode);
+        console.log('HEADERS: ' + JSON.stringify(res.headers));
+        parseZip(res);
+    }).end();
+};
+
 var main = function (args) {
-    if (/^http:\/\//.test(args[args.length-1])) {
-        console.log("connecting...");
-        Http.request(args[args.length-1], function (response) {
-			var str = '';
-            console.log("downloading " + args[args.length-1]);
-			response.on('data', function (chunk) { str += chunk; });
-			response.on('end', function () { parseDump(str); });
-        }).end();
-    } else {
+    if (/:.*@/.test(args[args.length-1])) {
+        xardump(args[args.length-1]);
+    } else if (/\.xml/.test(args[args.length-1])) {
         Fs.readFile(args[args.length-1], function (err, data) {
+            if (err) { throw err; }
             var dat = data.toString('utf8');
             parseDump(dat);
         });
+    } else if (/\.xar/.test(args[args.length-1])) {
+        parseZip(Fs.createReadStream(args[args.length-1]));
+    } else {
+        console.log("Usage:\n" +
+            "    xardump /path/to/xwiki_xar_file.xar   # dump a xar file to fs representation\n" +
+            "    xardump /path/to/WebHome.xml          # dump a single xwiki file\n" +
+            "    xardump <user>:<password>@<hostname>[:<port>]/xwiki/bin/export/<space>/<page>\n" +
+            "        # dump a wiki page from a running wiki");
     }
 };
 main(process.argv);
