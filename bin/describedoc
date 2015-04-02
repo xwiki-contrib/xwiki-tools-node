@@ -5,6 +5,7 @@ var XMHell = require('xmhell');
 var Fs = require('fs');
 var nThen = require('nthen');
 var Http = require('http');
+var Https = require('https');
 var Unzip = require('unzip2');
 
 var DEFAULT_PKG = [
@@ -96,7 +97,7 @@ var parseZip = function (stream) {
 };
 
 // Admin:admin@blk1:8080/riscoss/wiki/wiki1/export/Main/WebHome
-var xardump = function (arg) {
+var xardump = function (arg, ssl) {
     var userPass;
     var host;
     var port = 80;
@@ -123,7 +124,8 @@ var xardump = function (arg) {
     path = arg + '?name=x&pages=' + docName;
     console.log('query: ' + userPass + "@" + host + ":" + port + "/" + path);
 
-    var req = Http.request({
+    var http = (ssl) ? Https : Http;
+    var req = http.request({
         hostname: host,
         port: port,
         path: path,
@@ -138,7 +140,7 @@ var xardump = function (arg) {
 
 var main = function (args) {
     if (/:.*@/.test(args[args.length-1])) {
-        xardump(args[args.length-1]);
+        xardump(args[args.length-1], (args.indexOf('--ssl') !== -1));
     } else if (/\.xml/.test(args[args.length-1])) {
         Fs.readFile(args[args.length-1], function (err, data) {
             if (err) { throw err; }
@@ -152,7 +154,10 @@ var main = function (args) {
             "    xardump /path/to/xwiki_xar_file.xar   # dump a xar file to fs representation\n" +
             "    xardump /path/to/WebHome.xml          # dump a single xwiki file\n" +
             "    xardump <user>:<password>@<hostname>[:<port>]/xwiki/bin/export/<space>/<page>\n" +
-            "        # dump a wiki page from a running wiki");
+            "        # dump a wiki page from a running wiki" +
+            "    xardump --ssl <user>:<password>@<hostname>[:<port>]/xwiki/bin/export/<space>/" +
+            "<page>\n" +
+            "        # dump a wiki page from a running wiki (https)");
     }
 };
 main(process.argv);
