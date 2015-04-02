@@ -1,6 +1,30 @@
 # XWiki Tools
 
-Example:
+Toolchain for building and dumping XWiki Archive (`xar`) files.
+
+## Intallation
+
+With nodejs and npm installed, use:
+
+    sudo npm install -g xwiki-tools
+
+## Workflow
+
+Dump a page from a running wiki to a directory structure
+
+    xardump <user>:<password>@<wiki hostname>:<wiki port>/<wiki export path>
+    Example: xardump Admin:admin@blk1:8080/xwiki/wiki/xwiki/export/Main/WebHome
+
+Build an XWiki Archive from directory structure
+
+    xargen
+
+Build an XWiki Archive and auto-import it into a running XWiki instance
+
+    xargen --post <user>:<password>@<wiki hostname>:<wiki port>/<wiki rest import path>
+    Example: xargen --post Admin:admin@blk1:8080/xwiki/rest/wikis/xwiki
+
+## Workflow Example
 
 Dump xar from running subwiki (named wiki1):
 
