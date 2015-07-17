@@ -61,14 +61,13 @@ var parseDump = function (dat) {
     nThen(function (waitFor) {
         Fs.mkdir(process.cwd() + '/src', waitFor(function (err) {
             if (err && err.code !== 'EEXIST') { throw err; }
-            process.chdir(process.cwd() + '/src');
         }))
     }).nThen(function (waitFor) {
-        writeDir(process.cwd(), XWiki.tools.DocParser.parse(json), waitFor());
+        writeDir(process.cwd() + '/src', XWiki.tools.DocParser.parse(json), waitFor());
     }).nThen(function (waitFor) {
-        Fs.exists('xwiki/this.js', waitFor(function (ex) {
+        Fs.exists('src/xwiki/this.js', waitFor(function (ex) {
             if (ex) { return; }
-            Fs.writeFile('xwiki/this.js', DEFAULT_PKG, waitFor(function (err) {
+            Fs.writeFile('src/xwiki/this.js', DEFAULT_PKG, waitFor(function (err) {
                 if (err) { throw err; }
             }));
         }));
