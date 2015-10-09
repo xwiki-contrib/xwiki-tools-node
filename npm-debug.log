@@ -1,0 +1,107 @@
+0 info it worked if it ends with ok
+1 verbose cli [ 'node', '/usr/local/bin/npm', 'publish' ]
+2 info using npm@2.10.1
+3 info using node@v0.12.4
+4 verbose node symlink /usr/local/bin/node
+5 verbose publish [ '.' ]
+6 silly cache add args [ '.', null ]
+7 verbose cache add spec .
+8 silly cache add parsed spec { raw: '.',
+8 silly cache add   scope: null,
+8 silly cache add   name: null,
+8 silly cache add   rawSpec: '.',
+8 silly cache add   spec: '/Users/user/wrk/node-xwikimodel',
+8 silly cache add   type: 'directory' }
+9 verbose addLocalDirectory /Users/user/.npm/xwiki-tools/0.6.10/package.tgz not in flight; packing
+10 verbose tar pack [ '/Users/user/.npm/xwiki-tools/0.6.10/package.tgz',
+10 verbose tar pack   '/Users/user/wrk/node-xwikimodel' ]
+11 verbose tarball /Users/user/.npm/xwiki-tools/0.6.10/package.tgz
+12 verbose folder /Users/user/wrk/node-xwikimodel
+13 info prepublish xwiki-tools@0.6.10
+14 verbose addLocalTarball adding from inside cache /Users/user/.npm/xwiki-tools/0.6.10/package.tgz
+15 silly cache afterAdd xwiki-tools@0.6.10
+16 verbose afterAdd /Users/user/.npm/xwiki-tools/0.6.10/package/package.json not in flight; writing
+17 verbose afterAdd /Users/user/.npm/xwiki-tools/0.6.10/package/package.json written
+18 silly publish { author: { name: 'Caleb James DeLisle' },
+18 silly publish   name: 'xwiki-tools',
+18 silly publish   description: 'Tools for building documents and packages suitable for import into XWiki.',
+18 silly publish   version: '0.6.10',
+18 silly publish   repository:
+18 silly publish    { url: 'git+https://github.com/xwiki-contrib/xwiki-tools.git',
+18 silly publish      type: 'git' },
+18 silly publish   main: './index',
+18 silly publish   bin: { xardump: './bin/describedoc', xargen: './bin/xargen' },
+18 silly publish   licenses:
+18 silly publish    [ { type: 'AGPLv3.0+',
+18 silly publish        url: 'http://www.gnu.org/licenses/agpl-3.0.txt' } ],
+18 silly publish   dependencies:
+18 silly publish    { 'buffered-writer': '~0.2.3',
+18 silly publish      archiver: '~0.4',
+18 silly publish      unzip2: '~0.2.5',
+18 silly publish      'node-uuid': '~1.4.0',
+18 silly publish      xmhell: '~0.1.2',
+18 silly publish      'node.extend': '~1.0.8',
+18 silly publish      mkdirp: '~0.3.5',
+18 silly publish      temp: '~0.5.0',
+18 silly publish      nthen: '~0.1.1' },
+18 silly publish   devDependencies: { whiskey: '~0.6.13', nthen: '~0.1.0' },
+18 silly publish   engines: { node: '*' },
+18 silly publish   scripts: { test: 'node test/run.js' },
+18 silly publish   readme: '# XWiki Tools\n\n[![XWiki labs logo](https://raw.githubusercontent.com/xwiki-labs/xwiki-labs-logo/master/projects/xwikilabs/xwikilabsproject.png "XWiki labs")](https://labs.xwiki.com/xwiki/bin/view/Projects/XWikiLabsProject)\n\nToolchain for building and dumping XWiki Archive (`xar`) files.\n\n## Intallation\n\nWith nodejs and npm installed, use:\n\n    sudo npm install -g xwiki-tools\n\n## Workflow\n\nDump a page from a running wiki to a directory structure\n\n    xardump <user>:<password>@<wiki hostname>:<wiki port>/<wiki export path>\n    Example: xardump Admin:admin@blk1:8080/xwiki/wiki/xwiki/export/Main/WebHome\n\nBuild an XWiki Archive from directory structure\n\n    xargen\n\nBuild an XWiki Archive and auto-import it into a running XWiki instance\n\n    xargen --post <user>:<password>@<wiki hostname>:<wiki port>/<wiki rest import path>\n    Example: xargen --post Admin:admin@blk1:8080/xwiki/rest/wikis/xwiki\n\n## Workflow Example\n\nDump xar from running subwiki (named wiki1):\n\n```\nuser@toshitba:~/Desktop/test$ rm ./* -rf\nuser@toshitba:~/Desktop/test$ xardump Admin:admin@blk1:8080/xwiki/wiki/wiki1/export/Main/WebHome\nquery: Admin:admin@blk1:8080//xwiki/wiki/wiki1/export/Main/WebHome?name=x&pages=Main.WebHome\nSTATUS: 200\nHEADERS: {"server":"Apache-Coyote/1.1","set-cookie":["JSESSIONID=B630723680EB9BA8CEF6CACD9E41E196; Path=/xwiki/; HttpOnly"],"content-disposition":"attachment; filename=x.xar","content-type":"application/zip;charset=ISO-8859-1","content-language":"en","transfer-encoding":"chunked","date":"Tue, 31 Mar 2015 14:16:59 GMT"}\nwriteDir: /home/user/Desktop/test/src\nwriteDir: /home/user/Desktop/test/src/xwiki\nwriteDir: /home/user/Desktop/test/src/xwiki/Main\nwriteDir: /home/user/Desktop/test/src/xwiki/Main/WebHome\nwriteDir: /home/user/Desktop/test/src/xwiki/Main/WebHome/objects\nwriteDir: /home/user/Desktop/test/src/xwiki/Main/WebHome/objects/XWiki.EditModeClass_1\nwriteFile: /home/user/Desktop/test/src/xwiki/Main/WebHome/objects/XWiki.EditModeClass_1/this.js\nwriteDir: /home/user/Desktop/test/src/xwiki/Main/WebHome/attachments\nwriteFile: /home/user/Desktop/test/src/xwiki/Main/WebHome/attachments/xwiki-logo.png\nwriteFile: /home/user/Desktop/test/src/xwiki/Main/WebHome/this.js\nwriteFile: /home/user/Desktop/test/src/xwiki/Main/WebHome/content.xwiki20\nwriteDir: /home/user/Desktop/test/src/classes\nwriteFile: /home/user/Desktop/test/src/classes/XWiki.EditModeClass.js\ndone\nuser@toshitba:~/Desktop/test$ \n```\n\nEdit content:\n\n```\nuser@toshitba:~/Desktop/test$ echo \'HAI MOM\' >> ./src/xwiki/Main/WebHome/content.xwiki20\n```\n\nRe-Package:\n\n```\nuser@toshitba:~/Desktop/test$ xargen\nran ./src//classes//XWiki.EditModeClass.js\nran ./src/xwiki/this.js\nran ./src//xwiki/Main/WebHome/this.js\nattachment ./src//xwiki/Main/WebHome/attachments/xwiki-logo.png\nobj ./src//xwiki/Main/WebHome/objects/XWiki.EditModeClass_1\nran ./src//xwiki/Main/WebHome/objects/XWiki.EditModeClass_1/this.js\n/tmp/xwiki-tools-genxar115231-14509-1j2gifu/package.xml Generating\npackage.xml Compressing\npackage.xml Complete\n/tmp/xwiki-tools-genxar115231-14509-1j2gifu/Main/WebHome.xml Generating\nMain/WebHome.xml Compressing\nMain/WebHome.xml Complete\nuser@toshitba:~/Desktop/test$ ls\ni-forgot-to-edit-src-slash-xwiki-slash-this-dot-js.xar  src\nuser@toshitba:~/Desktop/test$ \n```\n\nPackage and auto-post to subwiki (called wiki1):\n\n```\nuser@toshitba:~/Desktop/test$ xargen --post Admin:admin@blk1:8080/xwiki/rest/wikis/wiki1\nran ./src//classes//XWiki.EditModeClass.js\nran ./src/xwiki/this.js\nran ./src//xwiki/Main/WebHome/this.js\nattachment ./src//xwiki/Main/WebHome/attachments/xwiki-logo.png\nobj ./src//xwiki/Main/WebHome/objects/XWiki.EditModeClass_1\nran ./src//xwiki/Main/WebHome/objects/XWiki.EditModeClass_1/this.js\n/tmp/xwiki-tools-genxar115231-15382-1xl6muj/package.xml Generating\npackage.xml Compressing\npackage.xml Complete\n/tmp/xwiki-tools-genxar115231-15382-1xl6muj/Main/WebHome.xml Generating\nMain/WebHome.xml Compressing\nMain/WebHome.xml Complete\nPosting to [blk1]:8080/xwiki/rest/wikis/wiki1?backup=true&history=RESET\nSTATUS: 200\nHEADERS: {"set-cookie":["JSESSIONID=444CF64309319D262CCC7E8090F0DF52; Path=/xwiki/; HttpOnly"],"date":"Tue, 31 Mar 2015 14:21:00 GMT","accept-ranges":"bytes","server":"Restlet-Framework/2.0.14","xwiki-user":"XWiki.XWikiGuest","xwiki-version":"6.0-SNAPSHOT","content-type":"application/xml;charset=UTF-8","content-language":"en","transfer-encoding":"chunked"}\nBODY: <?xml version="1.0" encoding="UTF-8" standalone="yes"?><wiki xmlns="http://www.xwiki.org"><link href="http://blk1:8080/xwiki/rest/wikis/wiki1/spaces" rel="http://www.xwiki.org/rel/spaces"/><link href="http://blk1:8080/xwiki/rest/wikis/wiki1/classes" rel="http://www.xwiki.org/rel/classes"/><link href="http://blk1:8080/xwiki/rest/wikis/wiki1/modifications" rel="http://www.xwiki.org/rel/modifications"/><link href="http://blk1:8080/xwiki/rest/wikis/wiki1/search" rel="http://www.xwiki.org/rel/search"/><link href="http://blk1:8080/xwiki/rest/wikis/wiki1/query" rel="http://www.xwiki.org/rel/query"/><id>wiki1</id><name>wiki1</name></wiki>\nuser@toshitba:~/Desktop/test$\n```\n',
+18 silly publish   readmeFilename: 'README.md',
+18 silly publish   gitHead: '9d495b7664dc7a07e70443f040bf1ec7fa7db069',
+18 silly publish   bugs: { url: 'https://github.com/xwiki-contrib/xwiki-tools/issues' },
+18 silly publish   homepage: 'https://github.com/xwiki-contrib/xwiki-tools#readme',
+18 silly publish   _id: 'xwiki-tools@0.6.10',
+18 silly publish   _shasum: 'e8af6b985ea05b7915e3ff371c2a673c43b4d0da',
+18 silly publish   _from: '.' }
+19 verbose getPublishConfig undefined
+20 silly mapToRegistry name xwiki-tools
+21 silly mapToRegistry using default registry
+22 silly mapToRegistry registry https://registry.npmjs.org/
+23 silly mapToRegistry uri https://registry.npmjs.org/xwiki-tools
+24 verbose publish registryBase https://registry.npmjs.org/
+25 silly publish uploading /Users/user/.npm/xwiki-tools/0.6.10/package.tgz
+26 verbose request uri https://registry.npmjs.org/xwiki-tools
+27 verbose request sending authorization for write operation
+28 info attempt registry request try #1 at 19:36:54
+29 verbose request using bearer token for auth
+30 verbose request id 07e4fecb88668186
+31 http request PUT https://registry.npmjs.org/xwiki-tools
+32 http 403 https://registry.npmjs.org/xwiki-tools
+33 verbose headers { 'content-type': 'application/json',
+33 verbose headers   'cache-control': 'max-age=60',
+33 verbose headers   'content-length': '96',
+33 verbose headers   'accept-ranges': 'bytes',
+33 verbose headers   date: 'Fri, 09 Oct 2015 17:36:56 GMT',
+33 verbose headers   via: '1.1 varnish',
+33 verbose headers   connection: 'keep-alive',
+33 verbose headers   'x-served-by': 'cache-fra1235-FRA',
+33 verbose headers   'x-cache': 'MISS',
+33 verbose headers   'x-cache-hits': '0',
+33 verbose headers   'x-timer': 'S1444412214.602469,VS0,VE2356' }
+34 verbose request invalidating /Users/user/.npm/registry.npmjs.org/xwiki-tools on PUT
+35 error publish Failed PUT 403
+36 verbose stack Error: "You cannot publish over the previously published version 0.6.10." : xwiki-tools
+36 verbose stack     at CachingRegistryClient.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:247:14)
+36 verbose stack     at Request._callback (/usr/local/lib/node_modules/npm/node_modules/npm-registry-client/lib/request.js:170:14)
+36 verbose stack     at Request.self.callback (/usr/local/lib/node_modules/npm/node_modules/request/request.js:368:22)
+36 verbose stack     at Request.emit (events.js:110:17)
+36 verbose stack     at Request.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1219:14)
+36 verbose stack     at Request.emit (events.js:129:20)
+36 verbose stack     at IncomingMessage.<anonymous> (/usr/local/lib/node_modules/npm/node_modules/request/request.js:1167:12)
+36 verbose stack     at IncomingMessage.emit (events.js:129:20)
+36 verbose stack     at _stream_readable.js:908:16
+36 verbose stack     at process._tickCallback (node.js:355:11)
+37 verbose statusCode 403
+38 verbose pkgid xwiki-tools
+39 verbose cwd /Users/user/wrk/node-xwikimodel
+40 error Darwin 14.4.0
+41 error argv "node" "/usr/local/bin/npm" "publish"
+42 error node v0.12.4
+43 error npm  v2.10.1
+44 error code E403
+45 error "You cannot publish over the previously published version 0.6.10." : xwiki-tools
+46 error If you need help, you may report this error at:
+46 error     <https://github.com/npm/npm/issues>
+47 verbose exit [ 1, true ]
