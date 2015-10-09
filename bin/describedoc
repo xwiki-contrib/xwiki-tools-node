@@ -21,6 +21,12 @@ var writeDir = function (dir, structure, cb) {
     var nt = nThen;
     console.log('writeDir: ' + dir);
     for (var name in structure) {
+        var ename = encodeURIComponent(name);
+        if (name === ename) { continue; }
+        structure[ename] = structure[name];
+        delete structure[name];
+    }
+    for (var name in structure) {
         (function (name) {
             //console.log('name: ' + name);
             var exists = false;
@@ -44,7 +50,7 @@ var writeDir = function (dir, structure, cb) {
                     if (exists) { return; }
                     //console.log('mkdir: ' + file);
                     Fs.mkdir(file, waitFor(function (err) {
-                        if (err && err.code !== 'EEXIST') { throw err; }
+                        if (err && err.code !== 'EEXIST') { console.log(structure); throw err; }
                     }));
                 }).nThen(function (waitFor) {
                     writeDir(file, structure[name], waitFor());

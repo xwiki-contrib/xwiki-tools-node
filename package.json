@@ -2,7 +2,7 @@
     "author": "Caleb James DeLisle",
     "name": "xwiki-tools",
     "description": "Tools for building documents and packages suitable for import into XWiki.",
-    "version": "0.6.9",
+    "version": "0.6.10",
     "repository": {
         "url": "https://github.com/xwiki-contrib/xwiki-tools.git",
         "type": "git"
