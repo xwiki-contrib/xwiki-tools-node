@@ -125,7 +125,7 @@ var xardump = function (arg) {
     arg.replace(/\/([^\/]+)\/([^\/]+)$/, function (all, space, name) {
         docName = space + '.' + name;
     });
-    path = arg + '?name=x&pages=' + docName;
+    path = arg + '?name=x&basicauth=1&pages=' + docName;
     console.log('query: ' + userPass + "@" + host + ":" + port + "/" + path);
 
     var req = Http.request({
